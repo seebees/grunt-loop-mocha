@@ -1,20 +1,22 @@
 var child_process = require("child_process")
-var async = require('async')
 var path = require('path')
 var util = require('util')
+var _ = require('lodash')
+var async = require('async')
 
 module.exports = function (grunt) {
-  var _ = grun.util._
-
   return function processLoop(op, cb) {
     // rip up the op into vars
     var filesSrc                      = op.filesSrc
       , mocha_path                    = op.mocha_path
+      , reportLocation                = op.reportLocation
       , localopts                     = op.localopts
       , localOtherOptionsStringified  = op.localOtherOptionsStringified
       , itLabel                       = op.itLabel
-      , limit                         = op.limit || 5
-      , parallelType                  = op.parallelType
+      , localMochaOptions             = op.localMochaOptions
+
+    var limit         = localMochaOptions.limit || 5
+    var parallelType  = localMochaOptions.parallelType
 
     // pick a way to split up the work
     if (parallelType = 'directory') {  // async by directory
@@ -83,7 +85,7 @@ module.exports = function (grunt) {
 
       // report back the outcome
       child.on('close', function (code) {
-        _cb(null, {_itLabel: code})
+        _cb(null, [code, _itLabel])
       });
     }
   }
